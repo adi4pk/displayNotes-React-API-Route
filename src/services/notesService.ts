@@ -4,7 +4,7 @@ import type { UserLogin } from "../models/User";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-const API_BASE_URL = "http://localhost:8080/swagger/index.html";
+const API_BASE_URL = "http://localhost:8080/swagger/index.html/";
 
 export type ApiRequestError = {
   status: number;
