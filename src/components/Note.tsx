@@ -10,7 +10,10 @@ function Note({note}:NoteProps){
 
     return(
         <>
-            <div key={note.id} className="note-wrapper">
+            <div key={note.id} className="note-wrapper"
+            style={{display: "flex",
+              alignItems: "center",
+            }}>
         <input
           type="checkbox"
           id="delete-note-1"
