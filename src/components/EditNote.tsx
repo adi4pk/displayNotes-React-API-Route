@@ -1,39 +1,56 @@
 import type { NoteItem } from "../models/NoteItem";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { createNote } from "../services/notesService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { CreateNoteRequest } from "../models/CreateNoteRequest";
+import { getNoteById } from "../services/notesService";
+import { updateNote } from "../services/notesService";
 
-function NoteForm(){
+function EditNote(){
 
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+let navigate = useNavigate();
+const {id} = useParams();
+const [currentNote, setCurrentNote] = useState<NoteItem | null> (null);
+const [noteTitle, setNoteTitle] = useState("");
+const [noteContent, setNoteContent] = useState("");
+const [noteCategory, setNoteCategory] = useState("");
+const [isFavorite, setIsFavorite] = useState(Boolean);
+const [noteDate, setNoteDate] = useState("");
 
-    let navigate = useNavigate();
+useEffect(() => {
+    // console.log(currentNote);
+    fetchNote();
+    
+}, [])
 
-    let goToHome = () => {
-      navigate('/main');
+async function fetchNote(){
+    
+    let thisNote = await getNoteById(id??"");
+    setCurrentNote(thisNote);
+}
+
+async function editNote(){
+
+    let noteObj={
+        title: noteTitle,
+        content: noteContent,
+        categoryId: noteCategory,
+        isFavorite: isFavorite,
+        date: noteDate,
     }
 
-    const handleAddNote = async () =>{
+    setNoteTitle(noteObj.title);
+    setNoteContent(noteObj.content);
+    setNoteCategory(noteObj.categoryId);
+    setIsFavorite(noteObj.isFavorite);
+    setNoteDate(noteObj.date);
 
-        let noteObj: CreateNoteRequest = {
-            title: title,
-            content: content,
-            categoryId: "cccccccc-cccc-cccc-cccc-cccccccccccc",
-            isFavorite: false,
-            // date: Date.now().toString()
-            date: "2026-04-07T19:12:10.774Z"
-        }
+    return await updateNote(currentNote?.id+"", noteObj);
+}
 
-        let data = await createNote(noteObj);
- goToHome();
-        console.log(data);
-    }
-
-    return(
-        <>
-        <div className="add-note-form">
+return(
+    <>
+    <div className="add-note-form">
                 <h2
                   style={{
                     marginBottom: 25,
@@ -64,8 +81,8 @@ function NoteForm(){
                       height: "30px",
                       borderRadius: "5px",
                       }}
-                      // value={title}
-                      onChange={event => setTitle(event.target.value)}
+                      value={currentNote?.title}
+                      onChange={(event) => setNoteTitle(event.target.value)}
                     />
                   </div>
                   <div className="form-group"
@@ -86,33 +103,28 @@ function NoteForm(){
                       width: "400px",
                       height: "120px",
                       }}
-                      onChange={event => setContent(event.target.value)}
-                    />
+                      value={currentNote?.content}
+                      onChange={(event) => setNoteContent(event.target.value)}/>
                   </div>
                   <div className="form-buttons">
                     <label
                       htmlFor="add-note-toggle"
                       className="btn btn-primary"
-                      onClick={() => {
-                        handleAddNote();
-                        
-                      }}
+                      onClick={() => editNote}
                     >
                       💾 Salvează
                     </label>
                     <label
                       htmlFor="add-note-toggle"
                       className="btn btn-secondary"
-                      onClick={() => goToHome()}
                     >
                       ❌ Anulează
                     </label>
                   </div>
                 </form>
-              </div>
-            </>
-    );
-     
+              </div></>
+)
+
 }
 
-export default NoteForm;
+export default EditNote;

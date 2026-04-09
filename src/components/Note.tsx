@@ -1,13 +1,22 @@
+import { useState } from "react";
 import type { NoteItem } from "../models/NoteItem";
+import { Link, useNavigate } from "react-router-dom";
 
 
 type NoteProps={
     note: NoteItem;
+    // onEdit: (note:NoteItem) => void;
 }
 
 
 function Note({note}:NoteProps){
 
+  let navigate = useNavigate();
+
+  let goToEditNote = () => {
+    navigate("/editNote")
+  }
+  
     return(
         <>
             <div key={note.id} className="note-wrapper"
@@ -39,7 +48,8 @@ function Note({note}:NoteProps){
 
           <div className="note-actions">
             <label htmlFor="edit-note-1" className="action-btn edit-btn">
-              ✏️ Editează
+              <Link to={`/editNote/${note.id}`}>✏️ Editează</Link>
+              
             </label>
             <label
               htmlFor="delete-note-1"

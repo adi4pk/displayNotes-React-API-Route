@@ -3,6 +3,7 @@ import type { Token } from "../models/Token";
 import type { UserLogin } from "../models/User";
 import type { CreateNoteRequest } from "../models/CreateNoteRequest";
 import type { CreateNoteResponse } from "../models/CreateNoteResponse";
+import type { NoteItem } from "../models/NoteItem";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -78,14 +79,17 @@ let token = localStorage.getItem("access_token");
 
 export async function createNote(note: CreateNoteRequest): Promise<CreateNoteResponse>{
 
-  let token = localStorage.getItem("acess_token");
+  let token = localStorage.getItem("access_token");
+  console.log(token);
   const response = await fetch(`${API_BASE_URL}api/v1/notes`, {
   method: "POST",
   headers: {"Content-Type" : "application/json; charset=utf-8",
       "X-Requested-With" : "XMLHttpRequest",
       Authorization: `Bearer ${token}`
-    }
+    },
+  body: JSON.stringify(note)
   });
+
 
   if(!response.ok){
     let data = await response.text();
@@ -99,3 +103,55 @@ export async function createNote(note: CreateNoteRequest): Promise<CreateNoteRes
 
   return await response.json();
 }
+
+export async function getNoteById(id: string): Promise<NoteItem>{
+  let token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_BASE_URL}api/v1/notes/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Requested-With" : "XMLHttpRequest",
+      Authorization: `Bearer ${token}`,
+    }})
+
+    if(!response.ok){
+      let data = await response.text();
+
+      let error: ApiRequestError={
+        status: response.status,
+        message: data,
+      } 
+      throw error;
+    }
+
+    return await response.json();
+}
+
+export async function updateNote(id: string, note: CreateNoteRequest): Promise<NoteItem>{
+
+  let token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_BASE_URL}api/v1/notes/${id}`,{
+    method: "PUT",
+    headers: {
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Requested-With" : "XMLHttpRequest",
+      Authorization: `Bearer${token}`
+    },
+    body: JSON.stringify(note),   //need to add note:NoteItem as paramater => to send as BODY
+    
+  })
+
+  if(!response.ok){
+    let data = await response.text();
+
+    let error: ApiRequestError={
+      status: response.status,
+      message: data,
+    }
+    throw error;
+  }
+
+  return await response.json();
+} 
