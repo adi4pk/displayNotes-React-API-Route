@@ -10,7 +10,7 @@ function EditNote(){
 
 let navigate = useNavigate();
 const {id} = useParams();
-const [currentNote, setCurrentNote] = useState<NoteItem | null> (null);
+const [currentNote, setCurrentNote] = useState<NoteItem> ();
 const [noteTitle, setNoteTitle] = useState("");
 const [noteContent, setNoteContent] = useState("");
 const [noteCategory, setNoteCategory] = useState("");
@@ -23,29 +23,48 @@ useEffect(() => {
     
 }, [])
 
+let goToHome = () =>{
+    navigate('/main');
+}
+
 async function fetchNote(){
     
     let thisNote = await getNoteById(id??"");
     setCurrentNote(thisNote);
+    setNoteTitle(thisNote.title);
+    setNoteContent(thisNote.content);
+    setNoteCategory(thisNote.categoryId);
+    setIsFavorite(thisNote.isFavorite);
+    setNoteDate(thisNote.date);
 }
 
 async function editNote(){
 
-    let noteObj={
+    if(currentNote !==null){
+        let noteObj={
         title: noteTitle,
         content: noteContent,
         categoryId: noteCategory,
         isFavorite: isFavorite,
         date: noteDate,
     }
+    console.log(noteObj);
+    
 
-    setNoteTitle(noteObj.title);
-    setNoteContent(noteObj.content);
-    setNoteCategory(noteObj.categoryId);
-    setIsFavorite(noteObj.isFavorite);
-    setNoteDate(noteObj.date);
+    await updateNote(currentNote?.id+"", noteObj);
+    goToHome()
+    }
 
-    return await updateNote(currentNote?.id+"", noteObj);
+   
+    // goToHome();
+
+    // setNoteTitle(noteObj.title);
+    // setNoteContent(noteObj.content);
+    // setNoteCategory(noteObj.categoryId);
+    // setIsFavorite(noteObj.isFavorite);
+    // setNoteDate(noteObj.date);
+
+    
 }
 
 return(
@@ -75,13 +94,13 @@ return(
                       type="text"
                       id="note-title"
                       placeholder="Introdu titlul notei..."
-                      defaultValue="Notiță Nouă"
+                      defaultValue={currentNote?.title}
                       style={{
                         border: "2px solid salmon",
                       height: "30px",
                       borderRadius: "5px",
                       }}
-                      value={currentNote?.title}
+                    //   value={currentNote?.title}
                       onChange={(event) => setNoteTitle(event.target.value)}
                     />
                   </div>
@@ -96,27 +115,28 @@ return(
                     <textarea
                       id="note-content"
                       placeholder="Scrie notița aici..."
-                      defaultValue="Aceasta este o notiță nouă. Poți edita acest text."
+                      defaultValue={currentNote?.content}
                       style={{
                         border: "2px solid salmon",
                       borderRadius: "5px",
                       width: "400px",
                       height: "120px",
                       }}
-                      value={currentNote?.content}
+                    //   value={currentNote?.content} ----
                       onChange={(event) => setNoteContent(event.target.value)}/>
                   </div>
                   <div className="form-buttons">
                     <label
                       htmlFor="add-note-toggle"
                       className="btn btn-primary"
-                      onClick={() => editNote}
+                      onClick={() => editNote()}
                     >
                       💾 Salvează
                     </label>
                     <label
                       htmlFor="add-note-toggle"
                       className="btn btn-secondary"
+                      onClick={() => goToHome()}
                     >
                       ❌ Anulează
                     </label>

@@ -6,10 +6,10 @@ import NoteForm from "./NoteForm";
 import { useNavigate } from "react-router-dom";
 import { getNoteById } from "../services/notesService";
 
-
 function Home(){
 
   const [notes, setNotes] = useState<NoteItem[]>([]);
+
 
 
   useEffect(() =>{
@@ -39,6 +39,7 @@ function Home(){
   //   console.log(`current note is ${note}`);
   // }  ---- ONLY for PROPS
 
+
 return(
         <div className="container">
         <header>
@@ -66,17 +67,30 @@ return(
             </div>
             
 
-        <div className="notes-grid"
-        style={{display: "flex",}}>
+        <table className="notes-grid">
+          <thead>
+            <tr>
+            <th scope="col">Titlu</th>
+            <th scope="col">Data</th>
+            <th scope="col">Continut</th>
+            <th scope="col">Category ID</th>
+            <th scope="col">Editeaza</th>
+            </tr>
+          </thead>
+          <tbody className="table-container">
             {notes.map((note) => (
               <Note 
               key={note.id} 
               note={note}
+              reload={loadNotes}
               // onEdit={handleEditNoteBtn}
               />
+              
             ))}
+          </tbody>
             
-        </div>
+            
+        </table>
         
         </div>
     )

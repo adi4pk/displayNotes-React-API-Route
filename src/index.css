@@ -109,3 +109,26 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
+.table-container > tr > td{
+  border: 2px solid salmon;
+}
+
+.note-header{
+  border: 2px solid salmon;
+  display: flex;
+}
+
+.note-title{
+  /* text-align: start; */
+  min-width: 80%;
+}
+
+.favorite-star{
+  align-self: center;
+}
+
+.note-date{
+  min-width: 205px;
+}

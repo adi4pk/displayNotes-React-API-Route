@@ -128,16 +128,19 @@ export async function getNoteById(id: string): Promise<NoteItem>{
     return await response.json();
 }
 
-export async function updateNote(id: string, note: CreateNoteRequest): Promise<NoteItem>{
+export async function updateNote(id: string, note: CreateNoteRequest): Promise<CreateNoteResponse>{
 
   let token = localStorage.getItem("access_token");
+
+
+  console.log(token)
 
   const response = await fetch(`${API_BASE_URL}api/v1/notes/${id}`,{
     method: "PUT",
     headers: {
       "Content-Type" : "application/json; charset=utf-8",
       "X-Requested-With" : "XMLHttpRequest",
-      Authorization: `Bearer${token}`
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify(note),   //need to add note:NoteItem as paramater => to send as BODY
     
@@ -155,3 +158,30 @@ export async function updateNote(id: string, note: CreateNoteRequest): Promise<N
 
   return await response.json();
 } 
+
+export async function removeNote(id:string) : Promise<void>{
+  
+  let token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_BASE_URL}api/v1/notes/${id}`, {
+    method: "DELETE",
+    headers:{
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-Requested-With" : "XMLHttpRequest",
+      Authorization: `Bearer ${token}`,
+    },
+    body: null,
+  })
+
+  if(!response.ok){
+    let data = await response.text();
+
+    let error: ApiRequestError={
+      status: response.status,
+      message: data,
+    }
+    throw error;
+  }
+
+  return await response.json() as Promise<void>;
+}
