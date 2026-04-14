@@ -30,8 +30,12 @@ function Login() {
 
     let textResponse = "";
 
+    let goToNotes = () =>{
+    navigate("/main");
+  }
+
     try{
-      const data = await login({email: user, password: pass});
+    const data = await login({email: user, password: pass});    //login(user: userLogin)  |   destructure the User.ts interface
       if(data){
         goToNotes();
       }
@@ -39,13 +43,9 @@ function Login() {
       console.log(err);
       goToNotes();
     }
-    
-
   };
 
-  let goToNotes = () =>{
-    navigate("/main");
-  }
+  
 
   return (
     <div
